@@ -2,16 +2,16 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from domain.bucket import BucketFile, Bucket
+from domain.bucket import Bucket, BucketFile
 from repository.models import OrmBucket, OrmBucketFile
 
 
 class BucketRepository:
     def __init__(self, session: AsyncSession):
         self.session = session
-   
-    async def save(self, bucket: Bucket) -> None:
-        orm_bucket = await self.session.get(OrmBucket, bucket.id)
+
+    async def save(self, bucket: Bucket):
+        orm_bucket = await self.session.get(OrmBucket, str(bucket.id))
         if orm_bucket:
             orm_bucket.name = bucket.name
             orm_bucket.files = [OrmBucketFile.to_orm(file) for file in bucket.files]
@@ -20,8 +20,8 @@ class BucketRepository:
             self.session.add(orm_bucket)
         await self.session.commit()
 
-    async def get_bucket(self, bucket_id: int) -> Bucket | None:
-        query = select(OrmBucket).where(OrmBucket.id == bucket_id)
+    async def get_bucket(self, bucket_name: str) -> Bucket | None:
+        query = select(OrmBucket).where(OrmBucket.name == bucket_name)
         result = await self.session.execute(query)
         orm_bucket = result.scalar_one_or_none()
         if orm_bucket:
@@ -32,13 +32,6 @@ class BucketRepository:
         stmt = select(OrmBucket).options(selectinload(OrmBucket.files)).where(OrmBucket.id == bucket_id)
         result = await self.session.execute(stmt)
         return result.scalar_one_or_none()
-
-    async def create_bucket(self, name: str) -> OrmBucket:
-        bucket = OrmBucket(name=name)
-        self.session.add(bucket)
-        await self.session.commit()
-        await self.session.refresh(bucket)
-        return bucket
 
     async def list_buckets(self) -> list[OrmBucket]:
         query = select(OrmBucket)

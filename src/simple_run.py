@@ -1,9 +1,8 @@
 import asyncio
 
 from db import engine
-from domain.bucket import BucketFile
 from repository.models import Base
-from usecase.bucket import add_file_to_bucket, create_bucket, get_bucket, list_buckets
+from usecase.bucket import create_bucket, get_bucket, get_buckets
 
 # async def list_buckets():
 #     async with async_session() as session:
@@ -33,15 +32,12 @@ if __name__ == "__main__":
         # await init_models()  # 최초 1회 테이블 생성
 
         # print(bucket_file)
-        bucket = await get_bucket(1)
-        print(bucket)
 
         if False:
-            bucket_file = BucketFile(id=2, s3_key="test2.jpg")
-            await add_file_to_bucket(1, bucket_file)
-
+            bucket = await get_bucket(1)
+            print(bucket)
             await get_bucket(1)
-            await list_buckets()
+            await get_buckets()
             await create_bucket()
 
     asyncio.run(main())

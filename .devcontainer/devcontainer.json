@@ -1,0 +1,21 @@
+{
+	"name": "my-python-devcontainer",
+	"dockerComposeFile": "../docker-compose.yml",
+	"service": "app",
+	"workspaceFolder": "/app",
+	"customizations": {
+		"vscode": {
+			"settings": {
+				"python.defaultInterpreterPath": "/app/.venv/bin/python"
+			}
+		},
+		"extensions": [
+			"ms-python.python",
+			"ms-python.vscode-pylance"
+		],
+	},
+	"postCreateCommand": "uv sync",
+	"remoteEnv": {
+		"DATABASE_URL": "postgresql+asyncpg://postgres:password@db:5432/postgres"
+	}
+}

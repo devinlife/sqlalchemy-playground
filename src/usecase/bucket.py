@@ -4,6 +4,7 @@ from db import async_session
 from domain.bucket import Bucket, BucketFile
 from repository.bucket_repository import BucketRepository
 
+
 async def add_file_to_bucket(bucket_id: int, file: BucketFile):
     async with async_session() as session:
         repo = BucketRepository(session)
@@ -14,7 +15,6 @@ async def add_file_to_bucket(bucket_id: int, file: BucketFile):
 
         bucket.add_file(file)
         await repo.save(bucket)
-
 
 
 async def create_bucket(name: str | None = None):
@@ -73,5 +73,3 @@ async def delete_bucket(bucket_id: int):
         await session.delete(bucket)
         await session.commit()
         print(f"🗑️ Deleted bucket: id={bucket.id}, name={bucket.name}")
-
-

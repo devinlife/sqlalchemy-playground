@@ -11,8 +11,13 @@ class BucketRepository:
         self.session = session
    
     async def save(self, bucket: Bucket) -> None:
-        orm_bucket = OrmBucket.to_orm(bucket)
-        self.session.add(orm_bucket)
+        orm_bucket = await self.session.get(OrmBucket, bucket.id)
+        if orm_bucket:
+            orm_bucket.name = bucket.name
+            orm_bucket.files = [OrmBucketFile.to_orm(file) for file in bucket.files]
+        else:
+            orm_bucket = OrmBucket.to_orm(bucket)
+            self.session.add(orm_bucket)
         await self.session.commit()
 
     async def get_bucket(self, bucket_id: int) -> Bucket | None:
@@ -20,7 +25,6 @@ class BucketRepository:
         result = await self.session.execute(query)
         orm_bucket = result.scalar_one_or_none()
         if orm_bucket:
-            # return Bucket.from_orm(orm_bucket)
             return OrmBucket.from_orm(orm_bucket)
         return None
 

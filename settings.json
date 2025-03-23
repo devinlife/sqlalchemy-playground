@@ -1,11 +1,10 @@
 {
-    {
-        "python.analysis.extraPaths": [
-            "./src"
-        ],
-        "[python]": {
-            "editor.formatOnSave": true,
-            "editor.defaultFormatter": "charliermarsh.ruff"
-        }
+    "python.analysis.extraPaths": [
+        "./src"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "charliermarsh.ruff",
+        "editor.formatOnSave": true,
+        "ruff.importStrategy": "fromEnvironment"
     }
 }
